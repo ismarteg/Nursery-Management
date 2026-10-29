@@ -1,0 +1,31 @@
+# .NET
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/.vs/
+**/appsettings.*.local.json
+**/nursery*.db
+**/nursery*.db-shm
+**/nursery*.db-wal
+
+# Node / Angular
+**/node_modules/
+**/dist/
+**/.angular/
+frontend/certs/
+*.pem
+*.key
+*.crt
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*.log
+
+# Secrets
+.env
+.env.*
+!.env.example
