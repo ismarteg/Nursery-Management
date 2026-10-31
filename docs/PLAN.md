@@ -40,10 +40,10 @@ todos:
     status: pending
   - id: attendance-salaries
     content: CSV attendance upload and monthly salary calculation
-    status: pending
+    status: completed
   - id: dashboard
     content: Dashboard summary (children present, receivables, expenses, payroll)
-    status: pending
+    status: completed
 isProject: false
 ---
 

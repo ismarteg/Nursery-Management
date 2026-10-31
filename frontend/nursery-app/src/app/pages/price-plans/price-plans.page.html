@@ -1,0 +1,63 @@
+<section class="page">
+  <app-page-header
+    titleKey="PLANS.TITLE"
+    icon="fa-solid fa-tags"
+    [breadcrumbs]="[{ labelKey: 'NAV.PLANS' }]" />
+  @if (canWrite) {
+    <div class="page-actions">
+      <a class="primary btn" routerLink="/price-plans/new">
+        <i class="fa-solid fa-plus"></i>
+        {{ 'PLANS.ADD' | translate }}
+      </a>
+    </div>
+  }
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (rows().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'PLANS.NAME' | translate }}</th>
+            <th>{{ 'PLANS.AMOUNT' | translate }}</th>
+            <th>{{ 'PLANS.CYCLE' | translate }}</th>
+            <th>{{ 'PLANS.DAYS_COUNT' | translate }}</th>
+            <th>{{ 'CHILDREN.TITLE' | translate }}</th>
+            <th>{{ 'COMMON.STATUS' | translate }}</th>
+            @if (canWrite) {
+              <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>
+                <strong>{{ row.name }}</strong>
+                @if (row.description) {
+                  <div class="muted">{{ row.description }}</div>
+                }
+              </td>
+              <td>{{ row.amount }}</td>
+              <td>{{ ('PLANS.CYCLE_' + row.billingCycle.toUpperCase()) | translate }}</td>
+              <td>{{ row.daysCount }}</td>
+              <td>{{ row.childrenCount }}</td>
+              <td>{{ (row.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE') | translate }}</td>
+              @if (canWrite) {
+                <td class="actions">
+                  <a class="link-btn" [routerLink]="['/price-plans', row.id, 'edit']">{{ 'COMMON.EDIT' | translate }}</a>
+                  <button type="button" class="danger" (click)="remove(row)">{{ 'COMMON.DELETE' | translate }}</button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+

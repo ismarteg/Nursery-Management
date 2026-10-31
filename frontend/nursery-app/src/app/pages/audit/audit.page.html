@@ -1,0 +1,62 @@
+<section class="page">
+  <app-page-header
+    titleKey="AUDIT.TITLE"
+    icon="fa-solid fa-clock-rotate-left"
+    [breadcrumbs]="[{ labelKey: 'NAV.AUDIT' }]"
+  />
+
+  <form class="filters" (ngSubmit)="load()">
+    <input [(ngModel)]="userName" name="userName" [placeholder]="'AUDIT.USER' | translate" />
+    <input [(ngModel)]="action" name="action" [placeholder]="'AUDIT.ACTION' | translate" />
+    <input [(ngModel)]="entityName" name="entityName" [placeholder]="'AUDIT.ENTITY' | translate" />
+    <button type="submit">{{ 'AUDIT.FILTER' | translate }}</button>
+  </form>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (items().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'AUDIT.TIME' | translate }}</th>
+            <th>{{ 'AUDIT.USER' | translate }}</th>
+            <th>{{ 'AUDIT.ACTION' | translate }}</th>
+            <th>{{ 'AUDIT.ENTITY' | translate }}</th>
+            <th>{{ 'AUDIT.IP' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items(); track item.id) {
+            <tr>
+              <td>{{ item.occurredAt | date: 'short' }}</td>
+              <td>{{ item.userName || '-' }}</td>
+              <td>{{ item.action }}</td>
+              <td>{{ item.entityName }} {{ item.entityId || '' }}</td>
+              <td>{{ item.ipAddress || '-' }}</td>
+              <td>
+                <button type="button" (click)="selected.set(item)">
+                  {{ 'AUDIT.DETAILS' | translate }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (selected(); as detail) {
+    <aside class="drawer">
+      <header>
+        <h2>{{ 'AUDIT.DETAILS' | translate }}</h2>
+        <button type="button" (click)="selected.set(null)">×</button>
+      </header>
+      <pre>{{ detail.oldValues || 'null' }}</pre>
+      <pre>{{ detail.newValues || 'null' }}</pre>
+    </aside>
+  }
+</section>

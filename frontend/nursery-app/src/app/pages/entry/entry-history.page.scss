@@ -1,0 +1,62 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.page h1 {
+  margin: 0;
+  color: var(--nm-primary-deep);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.filters select,
+.filters input,
+.filters button,
+.link-btn {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.55rem 0.8rem;
+  font: inherit;
+  background: #fff;
+}
+
+.filters button.primary,
+.link-btn {
+  background: var(--nm-primary-deep);
+  border-color: var(--nm-primary-deep);
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.total {
+  color: #64748b;
+}
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.7rem 0.85rem;
+  text-align: start;
+  border-bottom: 1px solid #e2e8f0;
+}

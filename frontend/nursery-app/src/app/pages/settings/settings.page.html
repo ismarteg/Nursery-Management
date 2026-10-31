@@ -1,0 +1,103 @@
+<section class="page">
+  <app-page-header
+    titleKey="SETTINGS.TITLE"
+    icon="fa-solid fa-gear"
+    subtitleKey="SETTINGS.HINT"
+    [breadcrumbs]="[{ labelKey: 'NAV.SETTINGS' }]"
+  />
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else {
+    <form class="form" (ngSubmit)="save()">
+      <fieldset>
+        <legend>{{ 'SETTINGS.CODE_OPTIONS' | translate }}</legend>
+
+        <label>
+          <span>{{ 'SETTINGS.CODE_DATA_TYPE' | translate }}</span>
+          <select name="codeDataType" [(ngModel)]="form.codeDataType" [disabled]="!canWrite">
+            @for (type of codeDataTypes; track type) {
+              <option [value]="type">{{ ('SETTINGS.DATA_' + type.toUpperCase()) | translate }}</option>
+            }
+          </select>
+        </label>
+
+        <label>
+          <span>{{ 'SETTINGS.PRINT_CODE_MODE' | translate }}</span>
+          <select name="printCodeMode" [(ngModel)]="form.printCodeMode" [disabled]="!canWrite">
+            @for (mode of codeModes; track mode) {
+              <option [value]="mode">{{ ('SETTINGS.MODE_' + mode.toUpperCase()) | translate }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="row2">
+          <label>
+            <span>{{ 'SETTINGS.QR_SIZE' | translate }}</span>
+            <select name="qrSizePx" [(ngModel)]="form.qrSizePx" [disabled]="!canWrite">
+              @for (size of allowedQrSizes(); track size) {
+                <option [ngValue]="size">{{ size }} px</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>{{ 'SETTINGS.BARCODE_HEIGHT' | translate }}</span>
+            <select name="barcodeHeight" [(ngModel)]="form.barcodeHeight" [disabled]="!canWrite">
+              @for (height of allowedBarcodeHeights(); track height) {
+                <option [ngValue]="height">{{ height }} px</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <label>
+          <span>{{ 'SETTINGS.BARCODE_FORMAT' | translate }}</span>
+          <select name="barcodeFormat" [(ngModel)]="form.barcodeFormat" [disabled]="!canWrite">
+            @for (format of barcodeFormats; track format) {
+              <option [value]="format">{{ format }}</option>
+            }
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset class="layouts-fieldset">
+        <legend>{{ 'SETTINGS.PRINT_LAYOUTS' | translate }}</legend>
+        <p class="hint">{{ 'SETTINGS.PRINT_LAYOUTS_HINT' | translate }}</p>
+
+        @if (printLayouts(); as layouts) {
+          <app-print-layout-editor
+            [layouts]="layouts"
+            [dbFields]="availableDbFields()"
+            [readonly]="!canWrite"
+            (layoutsChange)="onLayoutsChange($event)"
+          />
+        }
+
+        @if (canWrite) {
+          <div class="layout-actions">
+            <button type="button" (click)="resetLayouts()">{{ 'SETTINGS.RESET_LAYOUTS' | translate }}</button>
+            <button
+              type="button"
+              class="primary"
+              [disabled]="savingLayouts()"
+              (click)="saveLayoutsOnly()"
+            >
+              {{ 'SETTINGS.SAVE_LAYOUTS' | translate }}
+            </button>
+          </div>
+        }
+      </fieldset>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      @if (canWrite) {
+        <div class="form-actions">
+          <button type="submit" class="primary" [disabled]="saving()">{{ 'COMMON.SAVE' | translate }}</button>
+        </div>
+      }
+    </form>
+  }
+</section>

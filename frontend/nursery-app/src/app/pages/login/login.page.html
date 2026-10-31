@@ -1,0 +1,44 @@
+<section class="login-page">
+  <form class="login-card" (ngSubmit)="submit()">
+    <div class="lang-row">
+      <button type="button" class="link-btn" (click)="language.toggle()">
+        <i class="fa-solid fa-language"></i>
+        {{ language.current() === 'ar' ? 'English' : 'العربية' }}
+      </button>
+    </div>
+
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <i class="fa-solid fa-seedling"></i>
+      </span>
+      <h1>{{ 'APP.TITLE' | translate }}</h1>
+    </div>
+    <p>{{ 'LOGIN.TITLE' | translate }}</p>
+
+    <label>
+      <span>{{ 'LOGIN.USERNAME' | translate }}</span>
+      <input name="userName" [(ngModel)]="userName" autocomplete="username" required />
+    </label>
+
+    <label>
+      <span>{{ 'LOGIN.PASSWORD' | translate }}</span>
+      <input
+        name="password"
+        type="password"
+        [(ngModel)]="password"
+        autocomplete="current-password"
+        required
+      />
+    </label>
+
+    @if (error()) {
+      <p class="error">{{ 'LOGIN.ERROR' | translate }}</p>
+    }
+
+    <button type="submit" [disabled]="loading()">
+      <i class="fa-solid fa-right-to-bracket"></i>
+      {{ 'LOGIN.SUBMIT' | translate }}
+    </button>
+  </form>
+  <app-site-footer />
+</section>

@@ -1,0 +1,133 @@
+<section class="page">
+  <app-page-header
+    titleKey="NAV.DASHBOARD"
+    icon="fa-solid fa-gauge-high"
+    subtitleKey="DASHBOARD.HINT"
+    [breadcrumbs]="[{ labelKey: 'NAV.DASHBOARD' }]" />
+  <div class="page-actions">
+    <button type="button" class="btn" (click)="reload()" [disabled]="loading()">
+    <i class="fa-solid fa-rotate"></i>
+    {{ 'DASHBOARD.REFRESH' | translate }}
+    </button>
+  </div>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (summary(); as s) {
+    <p class="meta">{{ 'DASHBOARD.AS_OF' | translate }}: {{ s.generatedAt | date: 'short' }}</p>
+
+    <div class="grid">
+      @if (s.present) {
+        <a class="stat" routerLink="/entry">
+          <div class="stat-top">
+            <span class="stat-icon" aria-hidden="true">
+              <i class="fa-solid fa-qrcode"></i>
+            </span>
+            <div class="stat-metrics">
+              <strong class="value">{{ s.present.count }}</strong>
+              <span class="sub">{{ 'DASHBOARD.PRESENT_HINT' | translate }}</span>
+            </div>
+          </div>
+          <span class="label">{{ 'DASHBOARD.PRESENT' | translate }}</span>
+        </a>
+      }
+
+      @if (s.children) {
+        <a class="stat" routerLink="/children">
+          <div class="stat-top">
+            <span class="stat-icon" aria-hidden="true">
+              <i class="fa-solid fa-children"></i>
+            </span>
+            <div class="stat-metrics">
+              <strong class="value">{{ s.children.activeCount }}</strong>
+              <span class="sub">{{ 'DASHBOARD.ACTIVE' | translate }}</span>
+            </div>
+          </div>
+          <span class="label">{{ 'DASHBOARD.CHILDREN' | translate }}</span>
+        </a>
+      }
+
+      @if (s.classes) {
+        <a class="stat" routerLink="/classes">
+          <div class="stat-top">
+            <span class="stat-icon" aria-hidden="true">
+              <i class="fa-solid fa-chalkboard"></i>
+            </span>
+            <div class="stat-metrics">
+              <strong class="value">{{ s.classes.activeCount }}</strong>
+              <span class="sub">{{ 'DASHBOARD.ACTIVE' | translate }}</span>
+            </div>
+          </div>
+          <span class="label">{{ 'DASHBOARD.CLASSES' | translate }}</span>
+        </a>
+      }
+
+      @if (s.staff) {
+        <a class="stat" routerLink="/staff">
+          <div class="stat-top">
+            <span class="stat-icon" aria-hidden="true">
+              <i class="fa-solid fa-user-tie"></i>
+            </span>
+            <div class="stat-metrics">
+              <strong class="value">{{ s.staff.activeCount }}</strong>
+              <span class="sub">{{ 'DASHBOARD.ACTIVE' | translate }}</span>
+            </div>
+          </div>
+          <span class="label">{{ 'DASHBOARD.STAFF' | translate }}</span>
+        </a>
+      }
+
+      @if (s.receivables) {
+        <a class="stat accent" routerLink="/payments">
+          <div class="stat-top">
+            <span class="stat-icon" aria-hidden="true">
+              <i class="fa-solid fa-money-bill-wave"></i>
+            </span>
+            <div class="stat-metrics">
+              <strong class="value">{{ s.receivables.totalBalance }}</strong>
+              <span class="sub">
+                {{ s.receivables.openCount }} {{ 'DASHBOARD.OPEN_INVOICES' | translate }}
+                · {{ s.receivables.overdueCount }} {{ 'DASHBOARD.OVERDUE' | translate }}
+                ({{ s.receivables.overdueBalance }})
+              </span>
+            </div>
+          </div>
+          <span class="label">{{ 'DASHBOARD.RECEIVABLES' | translate }}</span>
+        </a>
+      }
+
+      @if (s.expenses) {
+        <a class="stat" routerLink="/expenses">
+          <div class="stat-top">
+            <span class="stat-icon" aria-hidden="true">
+              <i class="fa-solid fa-receipt"></i>
+            </span>
+            <div class="stat-metrics">
+              <strong class="value">{{ s.expenses.totalAmount }}</strong>
+              <span class="sub">{{ s.expenses.count }} {{ 'DASHBOARD.ITEMS' | translate }}</span>
+            </div>
+          </div>
+          <span class="label">{{ 'DASHBOARD.EXPENSES_MONTH' | translate }}</span>
+        </a>
+      }
+
+      @if (s.payroll) {
+        <a class="stat" routerLink="/salaries">
+          <div class="stat-top">
+            <span class="stat-icon" aria-hidden="true">
+              <i class="fa-solid fa-wallet"></i>
+            </span>
+            <div class="stat-metrics">
+              <strong class="value">{{ s.payroll.totalAmount }}</strong>
+              <span class="sub">
+                {{ 'DASHBOARD.UNPAID' | translate }}: {{ s.payroll.unpaidAmount }}
+                · {{ 'DASHBOARD.PAID' | translate }}: {{ s.payroll.paidAmount }}
+              </span>
+            </div>
+          </div>
+          <span class="label">{{ 'DASHBOARD.PAYROLL_MONTH' | translate }}</span>
+        </a>
+      }
+    </div>
+  }
+</section>

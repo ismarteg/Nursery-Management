@@ -1,0 +1,38 @@
+@if (messages.current(); as msg) {
+  <div class="msg-backdrop" (click)="messages.close()">
+    <article
+      class="msg-dialog"
+      [class]="'type-' + msg.type"
+      role="alertdialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="'msg-title-' + msg.id"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="msg-icon" aria-hidden="true">
+        @switch (msg.type) {
+          @case ('success') {
+            <i class="fa-solid fa-circle-check"></i>
+          }
+          @case ('error') {
+            <i class="fa-solid fa-circle-xmark"></i>
+          }
+          @case ('warning') {
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          }
+          @default {
+            <i class="fa-solid fa-circle-info"></i>
+          }
+        }
+      </div>
+
+      <div class="msg-body">
+        <h2 [id]="'msg-title-' + msg.id">{{ msg.title }}</h2>
+        <p>{{ msg.text }}</p>
+      </div>
+
+      <button type="button" class="primary btn" (click)="messages.close()">
+        {{ 'COMMON.OK' | translate }}
+      </button>
+    </article>
+  </div>
+}

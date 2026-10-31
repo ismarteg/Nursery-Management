@@ -1,0 +1,45 @@
+<section class="page">
+  <app-page-header
+    [titleKey]="editingId() ? 'EXPENSES.EDIT_CATEGORY' : 'EXPENSES.ADD_CATEGORY'"
+    icon="fa-solid fa-folder-open"
+    [breadcrumbs]="[
+      { labelKey: 'NAV.EXPENSES', link: '/expenses' },
+      { labelKey: editingId() ? 'EXPENSES.EDIT_CATEGORY' : 'EXPENSES.ADD_CATEGORY' }
+    ]" />
+  <div class="page-actions">
+    <a class="btn" routerLink="/expenses">
+    <i class="fa-solid fa-arrow-right"></i>
+    {{ 'COMMON.BACK' | translate }}
+    </a>
+  </div>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else {
+    <form class="form" (ngSubmit)="save()">
+      <fieldset>
+        <label>
+          <span>{{ 'EXPENSES.CATEGORY' | translate }}</span>
+          <input name="name" [(ngModel)]="categoryForm.name" required />
+        </label>
+        <label>
+          <span>{{ 'PLANS.DESCRIPTION' | translate }}</span>
+          <input name="description" [(ngModel)]="categoryForm.description" />
+        </label>
+        <label class="check">
+          <input type="checkbox" name="isActive" [(ngModel)]="categoryForm.isActive" />
+          <span>{{ 'COMMON.ACTIVE' | translate }}</span>
+        </label>
+      </fieldset>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <div class="form-actions">
+        <a routerLink="/expenses">{{ 'COMMON.CANCEL' | translate }}</a>
+        <button type="submit" class="primary" [disabled]="saving()">{{ 'COMMON.SAVE' | translate }}</button>
+      </div>
+    </form>
+  }
+</section>

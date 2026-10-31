@@ -1,0 +1,92 @@
+<section class="page">
+  <app-page-header
+    titleKey="CHILDREN.TITLE"
+    icon="fa-solid fa-children"
+    [breadcrumbs]="[{ labelKey: 'NAV.CHILDREN' }]" />
+  @if (canWrite) {
+    <div class="page-actions">
+      <a class="primary btn" routerLink="/children/new">
+        <i class="fa-solid fa-plus"></i>
+        {{ 'CHILDREN.ADD' | translate }}
+      </a>
+    </div>
+  }
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (rows().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'CHILDREN.CODE' | translate }}</th>
+            <th>{{ 'CHILDREN.NAME' | translate }}</th>
+            <th>{{ 'CHILDREN.GUARDIAN' | translate }}</th>
+            <th>{{ 'CLASSES.NAME' | translate }}</th>
+            <th>{{ 'PLANS.NAME' | translate }}</th>
+            <th>{{ 'COMMON.STATUS' | translate }}</th>
+            <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.code }}</td>
+              <td>{{ row.fullName }}</td>
+              <td>
+                @if (row.guardianName) {
+                  {{ row.guardianName }}
+                  @if (row.guardianRelation) {
+                    ({{ row.guardianRelation }})
+                  }
+                } @else {
+                  -
+                }
+              </td>
+              <td>{{ row.className || '-' }}</td>
+              <td>{{ row.pricePlanName || '-' }}</td>
+              <td>{{ (row.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE') | translate }}</td>
+              <td class="actions">
+                <button type="button" (click)="openIdentityCard(row)">{{ 'CHILDREN.IDENTITY_CARD' | translate }}</button>
+                <button type="button" (click)="openPickupPass(row)">{{ 'CHILDREN.PICKUP_PASS' | translate }}</button>
+                @if (canViewEntry) {
+                  <a class="link-btn" [routerLink]="['/children', row.id, 'entry-history']">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    {{ 'CHILDREN.ENTRY_HISTORY' | translate }}
+                  </a>
+                }
+                @if (canWrite) {
+                  <a class="link-btn" [routerLink]="['/children', row.id, 'edit']">{{ 'COMMON.EDIT' | translate }}</a>
+                  <button type="button" class="danger" (click)="remove(row)">{{ 'COMMON.DELETE' | translate }}</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@if ((cardOpen() || pickupOpen()) && activeLayout(); as layout) {
+  <div class="modal-backdrop" (click)="closeCard()">
+    <div class="card-modal" (click)="$event.stopPropagation()">
+      <h3 class="no-print">
+        {{ (pickupOpen() ? 'CHILDREN.PICKUP_PASS' : 'CHILDREN.IDENTITY_CARD') | translate }}
+      </h3>
+      <div class="label-preview-wrap">
+        <app-print-label
+          [layout]="layout"
+          [data]="labelData()"
+          printId="print-label"
+        />
+      </div>
+      <div class="modal-actions no-print">
+        <button type="button" (click)="closeCard()">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button type="button" class="primary" (click)="printCard()">{{ 'CHILDREN.PRINT' | translate }}</button>
+      </div>
+    </div>
+  </div>
+}

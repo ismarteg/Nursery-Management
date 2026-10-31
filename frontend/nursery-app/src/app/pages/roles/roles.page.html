@@ -1,0 +1,54 @@
+﻿<section class="page">
+  <app-page-header
+    titleKey="ROLES.TITLE"
+    icon="fa-solid fa-user-shield"
+    [breadcrumbs]="[{ labelKey: 'NAV.ROLES' }]" />
+  <div class="page-actions">
+    <a class="primary btn" routerLink="/roles/new">
+    <i class="fa-solid fa-plus"></i>
+    {{ 'ROLES.ADD' | translate }}
+    </a>
+  </div>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (roles().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <div class="cards">
+      @for (role of roles(); track role.id) {
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h2>{{ role.name }}</h2>
+              <p>{{ role.description }}</p>
+              <small>
+                {{ 'ROLES.USERS_COUNT' | translate }}: {{ role.usersCount }}
+                @if (role.isSystem) {
+                  · {{ 'ROLES.SYSTEM' | translate }}
+                }
+              </small>
+            </div>
+            <div class="actions">
+              <a class="link-btn" [routerLink]="['/roles', role.id, 'edit']">{{ 'COMMON.EDIT' | translate }}</a>
+              @if (!role.isSystem) {
+                <button type="button" class="danger" (click)="remove(role)">
+                  {{ 'COMMON.DELETE' | translate }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <h3>{{ 'ROLES.PERMISSIONS' | translate }}</h3>
+          <ul>
+            @for (permission of role.permissions; track permission) {
+              <li>{{ permission }}</li>
+            }
+          </ul>
+        </article>
+      }
+    </div>
+  }
+</section>
+
+

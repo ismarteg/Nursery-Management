@@ -1,0 +1,78 @@
+<section class="page">
+  <app-page-header
+    titleKey="PAYMENTS.TITLE"
+    icon="fa-solid fa-money-bill-wave"
+    [breadcrumbs]="[{ labelKey: 'NAV.PAYMENTS' }]" />
+  @if (canWrite) {
+    <div class="page-actions">
+      <a class="primary btn" routerLink="/payments/new">
+        <i class="fa-solid fa-plus"></i>
+        {{ 'PAYMENTS.ADD' | translate }}
+      </a>
+    </div>
+  }
+  <p class="hint">
+    {{ 'PAYMENTS.RECEIVABLES' | translate }}:
+    {{ receivables().count }} / {{ receivables().totalBalance }}
+  </p>
+
+  <form class="filters" (ngSubmit)="reload()">
+    <select name="statusFilter" [(ngModel)]="statusFilter">
+      <option value="">{{ 'PAYMENTS.STATUS' | translate }}</option>
+      <option value="Pending">Pending</option>
+      <option value="Partial">Partial</option>
+      <option value="Paid">Paid</option>
+      <option value="Overdue">Overdue</option>
+      <option value="Cancelled">Cancelled</option>
+    </select>
+    <button type="submit" class="primary">{{ 'AUDIT.FILTER' | translate }}</button>
+  </form>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (rows().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'CHILDREN.NAME' | translate }}</th>
+            <th>{{ 'PLANS.NAME' | translate }}</th>
+            <th>{{ 'PAYMENTS.DUE' | translate }}</th>
+            <th>{{ 'PAYMENTS.PAID' | translate }}</th>
+            <th>{{ 'PAYMENTS.BALANCE' | translate }}</th>
+            <th>{{ 'PAYMENTS.DUE_DATE' | translate }}</th>
+            <th>{{ 'PAYMENTS.STATUS' | translate }}</th>
+            @if (canWrite) {
+              <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr [class.overdue]="row.status === 'Overdue'">
+              <td>{{ row.childName }} ({{ row.childCode }})</td>
+              <td>{{ row.planName || '-' }}</td>
+              <td>{{ row.amountDue }}</td>
+              <td>{{ row.amountPaid }}</td>
+              <td>{{ row.balance }}</td>
+              <td>{{ row.dueDate | date: 'mediumDate' }}</td>
+              <td>{{ row.status }}</td>
+              @if (canWrite) {
+                <td class="actions">
+                  @if (row.status !== 'Paid' && row.status !== 'Cancelled') {
+                    <a class="link-btn" [routerLink]="['/payments', row.id, 'pay']">{{ 'PAYMENTS.RECORD' | translate }}</a>
+                    <button type="button" class="danger" (click)="cancel(row)">{{ 'PAYMENTS.CANCEL' | translate }}</button>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+

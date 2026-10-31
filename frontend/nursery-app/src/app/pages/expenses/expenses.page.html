@@ -1,0 +1,92 @@
+﻿<section class="page">
+  <app-page-header
+    titleKey="EXPENSES.TITLE"
+    icon="fa-solid fa-receipt"
+    [breadcrumbs]="[{ labelKey: 'NAV.EXPENSES' }]" />
+  @if (canWrite) {
+    <div class="page-actions">
+      <a class="btn" routerLink="/expenses/categories/new">
+        <i class="fa-solid fa-folder-plus"></i>
+        {{ 'EXPENSES.ADD_CATEGORY' | translate }}
+      </a>
+      <a class="primary btn" routerLink="/expenses/new">
+        <i class="fa-solid fa-plus"></i>
+        {{ 'EXPENSES.ADD' | translate }}
+      </a>
+    </div>
+  }
+  <p class="hint">
+    {{ 'EXPENSES.MONTHLY_TOTAL' | translate }}: {{ monthlyTotal() }}
+    · {{ 'EXPENSES.FILTERED_TOTAL' | translate }}: {{ totalAmount() }}
+  </p>
+
+  <section class="categories">
+    <h2>{{ 'EXPENSES.CATEGORIES' | translate }}</h2>
+    <div class="chips">
+      @for (cat of categories(); track cat.id) {
+        <article class="chip" [class.off]="!cat.isActive">
+          <strong>{{ cat.name }}</strong>
+          <span>{{ cat.expensesCount }}</span>
+          @if (canWrite) {
+            <a class="link-btn" [routerLink]="['/expenses/categories', cat.id, 'edit']">{{ 'COMMON.EDIT' | translate }}</a>
+            <button type="button" class="danger" (click)="removeCategory(cat)">{{ 'COMMON.DELETE' | translate }}</button>
+          }
+        </article>
+      }
+    </div>
+  </section>
+
+  <form class="filters" (ngSubmit)="reload()">
+    <select name="categoryId" [(ngModel)]="categoryId">
+      <option value="">{{ 'EXPENSES.CATEGORIES' | translate }}</option>
+      @for (cat of categories(); track cat.id) {
+        <option [value]="cat.id">{{ cat.name }}</option>
+      }
+    </select>
+    <input type="date" name="from" [(ngModel)]="from" />
+    <input type="date" name="to" [(ngModel)]="to" />
+    <button type="submit" class="primary">{{ 'AUDIT.FILTER' | translate }}</button>
+  </form>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (rows().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'EXPENSES.DATE' | translate }}</th>
+            <th>{{ 'EXPENSES.ITEM_TITLE' | translate }}</th>
+            <th>{{ 'EXPENSES.CATEGORY' | translate }}</th>
+            <th>{{ 'EXPENSES.AMOUNT' | translate }}</th>
+            <th>{{ 'EXPENSES.PAID_TO' | translate }}</th>
+            @if (canWrite) {
+              <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.expenseDate | date: 'mediumDate' }}</td>
+              <td>{{ row.title }}</td>
+              <td>{{ row.categoryName }}</td>
+              <td>{{ row.amount }}</td>
+              <td>{{ row.paidTo || '-' }}</td>
+              @if (canWrite) {
+                <td class="actions">
+                  <a class="link-btn" [routerLink]="['/expenses', row.id, 'edit']">{{ 'COMMON.EDIT' | translate }}</a>
+                  <button type="button" class="danger" (click)="removeExpense(row)">{{ 'COMMON.DELETE' | translate }}</button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+

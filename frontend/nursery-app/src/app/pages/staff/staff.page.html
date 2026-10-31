@@ -1,0 +1,58 @@
+<section class="page">
+  <app-page-header
+    titleKey="STAFF.TITLE"
+    icon="fa-solid fa-user-tie"
+    [breadcrumbs]="[{ labelKey: 'NAV.STAFF' }]" />
+  @if (canWrite) {
+    <div class="page-actions">
+      <a class="primary btn" routerLink="/staff/new">
+        <i class="fa-solid fa-plus"></i>
+        {{ 'STAFF.ADD' | translate }}
+      </a>
+    </div>
+  }
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (rows().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'STAFF.CODE' | translate }}</th>
+            <th>{{ 'STAFF.NAME' | translate }}</th>
+            <th>{{ 'STAFF.PHONE' | translate }}</th>
+            <th>{{ 'STAFF.SALARY' | translate }}</th>
+            <th>{{ 'CLASSES.TITLE' | translate }}</th>
+            <th>{{ 'COMMON.STATUS' | translate }}</th>
+            @if (canWrite) {
+              <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.code }}</td>
+              <td>{{ row.fullName }}</td>
+              <td>{{ row.phone || '-' }}</td>
+              <td>{{ row.baseSalary }} ({{ row.salaryType }})</td>
+              <td>{{ row.classNames.join(', ') || '-' }}</td>
+              <td>{{ (row.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE') | translate }}</td>
+              @if (canWrite) {
+                <td class="actions">
+                  <a class="link-btn" [routerLink]="['/staff', row.id, 'edit']">{{ 'COMMON.EDIT' | translate }}</a>
+                  <button type="button" class="danger" (click)="remove(row)">{{ 'COMMON.DELETE' | translate }}</button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+

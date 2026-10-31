@@ -1,0 +1,130 @@
+<section class="page">
+  <app-page-header
+    titleKey="PROFILE.TITLE"
+    icon="fa-solid fa-id-card"
+    subtitleKey="PROFILE.HINT"
+    [breadcrumbs]="[{ labelKey: 'NAV.PROFILE' }]"
+  />
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (profile(); as p) {
+    <div class="profile-layout">
+      <aside class="tabs">
+        <button
+          type="button"
+          class="tab"
+          [class.active]="tab() === 'personal'"
+          (click)="setTab('personal')"
+        >
+          <i class="fa-solid fa-user"></i>
+          <span>{{ 'PROFILE.TAB_PERSONAL' | translate }}</span>
+        </button>
+        <button
+          type="button"
+          class="tab"
+          [class.active]="tab() === 'security'"
+          (click)="setTab('security')"
+        >
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>{{ 'PROFILE.TAB_SECURITY' | translate }}</span>
+        </button>
+      </aside>
+
+      <div class="panel">
+        @if (tab() === 'personal') {
+          <h2>{{ 'PROFILE.TAB_PERSONAL' | translate }}</h2>
+          <dl class="details">
+            <div>
+              <dt>{{ 'USERS.USERNAME' | translate }}</dt>
+              <dd>{{ p.userName }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'USERS.FULL_NAME' | translate }}</dt>
+              <dd>{{ p.fullName }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'USERS.EMAIL' | translate }}</dt>
+              <dd>{{ p.email }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'NAV.ROLES' | translate }}</dt>
+              <dd>{{ p.roles.length ? p.roles.join(' · ') : '—' }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'COMMON.STATUS' | translate }}</dt>
+              <dd>{{ (p.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE') | translate }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'PROFILE.CREATED_AT' | translate }}</dt>
+              <dd>{{ p.createdAt | date: 'medium' }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'PROFILE.LAST_LOGIN' | translate }}</dt>
+              <dd>
+                @if (p.lastLoginAt) {
+                  {{ p.lastLoginAt | date: 'medium' }}
+                } @else {
+                  —
+                }
+              </dd>
+            </div>
+          </dl>
+        } @else {
+          <h2>{{ 'PROFILE.TAB_SECURITY' | translate }}</h2>
+          <p class="hint">{{ 'PROFILE.SECURITY_HINT' | translate }}</p>
+
+          <form class="form" (ngSubmit)="changePassword()">
+            <label>
+              <span>{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</span>
+              <input
+                name="currentPassword"
+                type="password"
+                [(ngModel)]="currentPassword"
+                autocomplete="current-password"
+                required
+              />
+            </label>
+            <label>
+              <span>{{ 'PROFILE.NEW_PASSWORD' | translate }}</span>
+              <input
+                name="newPassword"
+                type="password"
+                [(ngModel)]="newPassword"
+                autocomplete="new-password"
+                required
+                minlength="6"
+              />
+            </label>
+            <label>
+              <span>{{ 'PROFILE.CONFIRM_PASSWORD' | translate }}</span>
+              <input
+                name="confirmPassword"
+                type="password"
+                [(ngModel)]="confirmPassword"
+                autocomplete="new-password"
+                required
+                minlength="6"
+              />
+            </label>
+
+            @if (error() === 'PROFILE.PASSWORD_MISMATCH') {
+              <p class="error">{{ 'PROFILE.PASSWORD_MISMATCH' | translate }}</p>
+            } @else if (error() === 'PROFILE.PASSWORD_MIN') {
+              <p class="error">{{ 'PROFILE.PASSWORD_MIN' | translate }}</p>
+            } @else if (error()) {
+              <p class="error">{{ error() }}</p>
+            }
+
+            <div class="form-actions">
+              <button type="submit" class="primary" [disabled]="saving()">
+                <i class="fa-solid fa-key"></i>
+                {{ 'PROFILE.CHANGE_PASSWORD' | translate }}
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+  }
+</section>

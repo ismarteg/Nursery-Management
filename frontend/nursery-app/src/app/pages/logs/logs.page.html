@@ -1,0 +1,77 @@
+<section class="page">
+  <app-page-header
+    titleKey="LOGS.TITLE"
+    icon="fa-solid fa-clipboard-list"
+    subtitleKey="LOGS.HINT"
+    [breadcrumbs]="[{ labelKey: 'NAV.LOGS' }]"
+  />
+
+  <form class="filters" (ngSubmit)="load()">
+    <select name="logType" [(ngModel)]="logType">
+      <option value="">{{ 'LOGS.ALL_TYPES' | translate }}</option>
+      @for (type of logTypes; track type) {
+        <option [value]="type">{{ ('LOGS.TYPE_' + type.toUpperCase()) | translate }}</option>
+      }
+    </select>
+    <input name="module" [(ngModel)]="module" [placeholder]="'LOGS.MODULE' | translate" />
+    <input name="userName" [(ngModel)]="userName" [placeholder]="'LOGS.USER' | translate" />
+    <button type="submit" class="primary">{{ 'AUDIT.FILTER' | translate }}</button>
+  </form>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (items().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <p class="meta">{{ total() }} {{ 'LOGS.RECORDS' | translate }}</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'LOGS.TYPE' | translate }}</th>
+            <th>{{ 'LOGS.MODULE' | translate }}</th>
+            <th>{{ 'LOGS.ACTION' | translate }}</th>
+            <th>{{ 'LOGS.MESSAGE' | translate }}</th>
+            <th>{{ 'LOGS.USER' | translate }}</th>
+            <th>{{ 'LOGS.STATUS' | translate }}</th>
+            <th>{{ 'AUDIT.TIME' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of items(); track row.id) {
+            <tr [class]="'type-' + row.logType.toLowerCase()" (click)="selected.set(row)">
+              <td>
+                <span class="badge">{{ ('LOGS.TYPE_' + row.logType.toUpperCase()) | translate }}</span>
+              </td>
+              <td>{{ row.module }}</td>
+              <td>{{ row.action }}</td>
+              <td class="msg">{{ row.message }}</td>
+              <td>{{ row.userName || '-' }}</td>
+              <td>{{ row.statusCode || '-' }}</td>
+              <td>{{ row.occurredAt | date: 'short' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (selected(); as log) {
+    <div class="modal-backdrop" (click)="selected.set(null)">
+      <article class="modal" (click)="$event.stopPropagation()">
+        <h2>{{ 'LOGS.DETAILS' | translate }}</h2>
+        <p><strong>{{ 'LOGS.TYPE' | translate }}:</strong> {{ log.logType }}</p>
+        <p><strong>{{ 'LOGS.MODULE' | translate }}:</strong> {{ log.module }}</p>
+        <p><strong>{{ 'LOGS.ACTION' | translate }}:</strong> {{ log.action }}</p>
+        <p><strong>{{ 'LOGS.MESSAGE' | translate }}:</strong> {{ log.message }}</p>
+        <p><strong>{{ 'LOGS.USER' | translate }}:</strong> {{ log.userName || '-' }}</p>
+        <p><strong>{{ 'LOGS.STATUS' | translate }}:</strong> {{ log.statusCode || '-' }}</p>
+        <p><strong>{{ 'AUDIT.TIME' | translate }}:</strong> {{ log.occurredAt | date: 'medium' }}</p>
+        @if (log.details) {
+          <pre>{{ log.details }}</pre>
+        }
+        <button type="button" (click)="selected.set(null)">{{ 'COMMON.CANCEL' | translate }}</button>
+      </article>
+    </div>
+  }
+</section>

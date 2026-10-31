@@ -1,0 +1,79 @@
+<header class="page-header">
+  <div class="page-header__main">
+    <div class="title-row">
+      <span class="title-icon" aria-hidden="true">
+        <i [class]="icon"></i>
+      </span>
+      <div class="title-block">
+        <h1>{{ titleKey | translate }}</h1>
+        @if (subtitleKey) {
+          <p class="subtitle">{{ subtitleKey | translate }}</p>
+        }
+        <nav class="breadcrumb" aria-label="breadcrumb">
+          <a routerLink="/" class="crumb">
+            <i class="fa-solid fa-house"></i>
+            <span>{{ 'COMMON.HOME' | translate }}</span>
+          </a>
+          @for (crumb of breadcrumbs; track crumb.labelKey) {
+            <span class="sep"><i class="fa-solid fa-chevron-left"></i></span>
+            @if (crumb.link) {
+              <a [routerLink]="crumb.link" class="crumb">{{ crumb.labelKey | translate }}</a>
+            } @else {
+              <span class="crumb current">{{ crumb.labelKey | translate }}</span>
+            }
+          }
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-header__meta">
+    <button
+      type="button"
+      class="lang-btn"
+      (click)="language.toggle()"
+      [attr.title]="'NAV.LANGUAGE' | translate"
+      [attr.aria-label]="'NAV.LANGUAGE' | translate"
+    >
+      <i class="fa-solid fa-language"></i>
+      <span>{{ language.current() === 'ar' ? 'EN' : 'عربي' }}</span>
+    </button>
+
+    @if (user(); as u) {
+      <div class="user-menu" [class.open]="menuOpen()">
+        <button
+          type="button"
+          class="user-info"
+          (click)="toggleMenu($event)"
+          [attr.aria-expanded]="menuOpen()"
+          aria-haspopup="menu"
+        >
+          <div class="avatar" aria-hidden="true">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="user-text">
+            <strong class="user-name">{{ u.fullName || u.userName }}</strong>
+            <span class="user-role">
+              <i class="fa-solid fa-shield-halved"></i>
+              {{ roleLabel() }}
+            </span>
+          </div>
+          <i class="fa-solid fa-chevron-down caret" aria-hidden="true"></i>
+        </button>
+
+        @if (menuOpen()) {
+          <div class="user-dropdown" role="menu" (click)="$event.stopPropagation()">
+            <a routerLink="/profile" role="menuitem" (click)="closeMenu()">
+              <i class="fa-solid fa-id-card"></i>
+              <span>{{ 'NAV.PROFILE' | translate }}</span>
+            </a>
+            <button type="button" class="logout" role="menuitem" (click)="logout()">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>{{ 'NAV.LOGOUT' | translate }}</span>
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</header>

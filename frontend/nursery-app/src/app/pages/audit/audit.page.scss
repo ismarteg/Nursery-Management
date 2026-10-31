@@ -1,0 +1,90 @@
+.page h1 {
+  margin: 0 0 1rem;
+  color: var(--nm-primary-deep);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.filters input,
+.filters button,
+.table-wrap button {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  font: inherit;
+  background: #fff;
+}
+
+.filters button,
+.table-wrap button {
+  cursor: pointer;
+  background: var(--nm-primary-deep);
+  border-color: var(--nm-primary-deep);
+  color: #fff;
+}
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.75rem 0.9rem;
+  text-align: start;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.drawer {
+  position: fixed;
+  inset-inline-end: 1rem;
+  bottom: 1rem;
+  width: min(420px, calc(100vw - 2rem));
+  max-height: 50vh;
+  overflow: auto;
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35);
+}
+
+.drawer header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.drawer h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.drawer button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.drawer pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.6rem;
+  border-radius: 8px;
+}

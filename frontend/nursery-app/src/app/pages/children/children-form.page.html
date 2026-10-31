@@ -1,0 +1,252 @@
+<section class="page">
+  <app-page-header
+    [titleKey]="childId() ? 'CHILDREN.EDIT' : 'CHILDREN.ADD'"
+    icon="fa-solid fa-children"
+    [breadcrumbs]="[
+      { labelKey: 'NAV.CHILDREN', link: '/children' },
+      { labelKey: childId() ? 'CHILDREN.EDIT' : 'CHILDREN.ADD' }
+    ]" />
+  <div class="page-actions">
+    <a class="btn" routerLink="/children">
+    <i class="fa-solid fa-arrow-right"></i>
+    {{ 'COMMON.BACK' | translate }}
+    </a>
+  </div>
+  @if (identityCode()) {
+    <p class="meta">{{ 'CHILDREN.CODE' | translate }}: {{ identityCode() }}</p>
+  }
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else {
+    <form class="form" (ngSubmit)="save()">
+      <fieldset>
+        <legend>{{ 'CHILDREN.CHILD_SECTION' | translate }}</legend>
+        <div class="media-row">
+          <div class="photo-panel">
+            <div class="photo-frame">
+              @if (childPhotoUrl()) {
+                <img [src]="childPhotoUrl()!" alt="" />
+              } @else {
+                <span class="photo-placeholder">{{ 'CHILDREN.PHOTO' | translate }}</span>
+              }
+            </div>
+            <label class="file-btn">
+              <span>{{ 'CHILDREN.CHOOSE_PHOTO' | translate }}</span>
+              <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onChildPhotoSelected($event)" />
+            </label>
+          </div>
+          <div class="fields">
+            <label>
+              <span>{{ 'CHILDREN.NAME' | translate }} *</span>
+              <input name="fullName" [(ngModel)]="form.fullName" required />
+            </label>
+            <div class="row2">
+              <label>
+                <span>{{ 'CHILDREN.BIRTHDATE' | translate }}</span>
+                <input name="birthDate" type="date" [(ngModel)]="form.birthDate" />
+              </label>
+              <label>
+                <span>{{ 'CHILDREN.GENDER' | translate }}</span>
+                <select name="gender" [(ngModel)]="form.gender">
+                  <option value="">-</option>
+                  <option value="Male">{{ 'CHILDREN.MALE' | translate }}</option>
+                  <option value="Female">{{ 'CHILDREN.FEMALE' | translate }}</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="parents-row">
+        <fieldset>
+          <legend>{{ 'CHILDREN.FATHER' | translate }}</legend>
+          <div class="media-row compact">
+            <div class="photo-panel">
+              <div class="photo-frame sm">
+                @if (fatherPhotoUrl()) {
+                  <img [src]="fatherPhotoUrl()!" alt="" />
+                } @else {
+                  <span class="photo-placeholder">{{ 'CHILDREN.PHOTO' | translate }}</span>
+                }
+              </div>
+              <label class="file-btn">
+                <span>{{ 'CHILDREN.CHOOSE_PHOTO' | translate }}</span>
+                <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFatherPhotoSelected($event)" />
+              </label>
+            </div>
+            <div class="fields">
+              <label>
+                <span>{{ 'CHILDREN.NAME' | translate }} *</span>
+                <input name="fatherName" [(ngModel)]="form.father.fullName" required />
+              </label>
+              <label>
+                <span>{{ 'CHILDREN.PHONE' | translate }} *</span>
+                <input name="fatherPhone" [(ngModel)]="form.father.phone" required />
+              </label>
+              <label>
+                <span>{{ 'CHILDREN.EMAIL' | translate }}</span>
+                <input name="fatherEmail" type="email" [(ngModel)]="form.father.email" />
+              </label>
+              <label>
+                <span>{{ 'CHILDREN.NATIONAL_ID' | translate }}</span>
+                <input name="fatherNid" [(ngModel)]="form.father.nationalId" maxlength="14" pattern="\d{14}" />
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>{{ 'CHILDREN.MOTHER' | translate }}</legend>
+          <div class="media-row compact">
+            <div class="photo-panel">
+              <div class="photo-frame sm">
+                @if (motherPhotoUrl()) {
+                  <img [src]="motherPhotoUrl()!" alt="" />
+                } @else {
+                  <span class="photo-placeholder">{{ 'CHILDREN.PHOTO' | translate }}</span>
+                }
+              </div>
+              <label class="file-btn">
+                <span>{{ 'CHILDREN.CHOOSE_PHOTO' | translate }}</span>
+                <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onMotherPhotoSelected($event)" />
+              </label>
+            </div>
+            <div class="fields">
+              <label>
+                <span>{{ 'CHILDREN.NAME' | translate }} *</span>
+                <input name="motherName" [(ngModel)]="form.mother.fullName" required />
+              </label>
+              <label>
+                <span>{{ 'CHILDREN.PHONE' | translate }} *</span>
+                <input name="motherPhone" [(ngModel)]="form.mother.phone" required />
+              </label>
+              <label>
+                <span>{{ 'CHILDREN.EMAIL' | translate }}</span>
+                <input name="motherEmail" type="email" [(ngModel)]="form.mother.email" />
+              </label>
+              <label>
+                <span>{{ 'CHILDREN.NATIONAL_ID' | translate }}</span>
+                <input name="motherNid" [(ngModel)]="form.mother.nationalId" maxlength="14" pattern="\d{14}" />
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <fieldset>
+        <legend>{{ 'CHILDREN.GUARDIAN_SECTION' | translate }}</legend>
+        <label class="check">
+          <input
+            type="checkbox"
+            name="guardianEnabled"
+            [(ngModel)]="guardianEnabled"
+            (ngModelChange)="onGuardianToggle($event)"
+          />
+          <span>{{ 'CHILDREN.ENABLE_GUARDIAN' | translate }}</span>
+        </label>
+
+        @if (guardianEnabled) {
+          <div class="enrollment-fields">
+            <label>
+              <span>{{ 'CHILDREN.GUARDIAN' | translate }}</span>
+              <input name="guardianName" [(ngModel)]="form.guardianName" />
+            </label>
+            <div class="row2">
+              <label>
+                <span>{{ 'CHILDREN.GUARDIAN_PHONE' | translate }}</span>
+                <input name="guardianPhone" [(ngModel)]="form.guardianPhone" />
+              </label>
+              <label>
+                <span>{{ 'CHILDREN.GUARDIAN_RELATION' | translate }}</span>
+                <select name="guardianRelation" [(ngModel)]="form.guardianRelation">
+                  <option value="">-</option>
+                  @for (rel of relations; track rel) {
+                    <option [value]="rel">{{ ('CHILDREN.REL_' + rel.toUpperCase()) | translate }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+            <label>
+              <span>{{ 'CHILDREN.GUARDIAN_EMAIL' | translate }}</span>
+              <input name="guardianEmail" type="email" [(ngModel)]="form.guardianEmail" />
+            </label>
+          </div>
+        }
+      </fieldset>
+
+      <fieldset>
+        <legend>{{ 'CHILDREN.ENROLLMENT' | translate }}</legend>
+        <label class="check">
+          <input type="checkbox" name="enrollmentEnabled" [(ngModel)]="enrollmentEnabled" (ngModelChange)="onEnrollmentToggle($event)" />
+          <span>{{ 'CHILDREN.ENABLE_ENROLLMENT' | translate }}</span>
+        </label>
+
+        @if (enrollmentEnabled) {
+          <div class="enrollment-fields">
+            <label>
+              <span>{{ 'CLASSES.NAME' | translate }}</span>
+              <select name="classId" [(ngModel)]="form.classId">
+                <option value="">-</option>
+                @for (item of classes(); track item.id) {
+                  <option [value]="item.id">{{ item.name }}</option>
+                }
+              </select>
+            </label>
+            <label>
+              <span>{{ 'PLANS.NAME' | translate }}</span>
+              <select name="pricePlanId" [(ngModel)]="form.pricePlanId">
+                <option value="">-</option>
+                @for (plan of plans(); track plan.id) {
+                  <option [value]="plan.id">{{ plan.name }} ({{ plan.amount }})</option>
+                }
+              </select>
+            </label>
+            <label>
+              <span>{{ 'COMMON.NOTES' | translate }}</span>
+              <input name="notes" [(ngModel)]="form.notes" />
+            </label>
+            <label class="check">
+              <input type="checkbox" name="isActive" [(ngModel)]="form.isActive" />
+              <span>{{ 'COMMON.ACTIVE' | translate }}</span>
+            </label>
+          </div>
+        }
+      </fieldset>
+
+      @if (childId()) {
+        <fieldset>
+          <legend>{{ 'CHILDREN.CODES_SECTION' | translate }}</legend>
+          <p>
+            <strong>{{ 'CHILDREN.IDENTITY_CODE' | translate }}:</strong>
+            {{ identityCode() || '-' }}
+          </p>
+          <p>
+            <strong>{{ 'CHILDREN.ENTRY_CODE' | translate }}:</strong>
+            {{ entryCode() || ('CHILDREN.NO_ENTRY_CODE' | translate) }}
+          </p>
+          <div class="row-actions">
+            <button type="button" class="primary" (click)="generateEntryCode()">
+              {{ 'CHILDREN.GENERATE_ENTRY' | translate }}
+            </button>
+            <input name="manualEntry" [(ngModel)]="manualEntryCode" [placeholder]="'CHILDREN.SET_ENTRY_PLACEHOLDER' | translate" />
+            <button type="button" (click)="setEntryCode()">{{ 'CHILDREN.SET_ENTRY' | translate }}</button>
+            @if (entryCode()) {
+              <button type="button" class="danger" (click)="clearEntryCode()">{{ 'CHILDREN.CLEAR_ENTRY' | translate }}</button>
+            }
+          </div>
+        </fieldset>
+      }
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <div class="form-actions">
+        <a routerLink="/children">{{ 'COMMON.CANCEL' | translate }}</a>
+        <button type="submit" class="primary" [disabled]="saving()">{{ 'COMMON.SAVE' | translate }}</button>
+      </div>
+    </form>
+  }
+</section>

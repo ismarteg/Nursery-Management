@@ -1,0 +1,60 @@
+<section class="page">
+  <app-page-header
+    titleKey="USERS.TITLE"
+    icon="fa-solid fa-users"
+    [breadcrumbs]="[{ labelKey: 'NAV.USERS' }]" />
+  <div class="page-actions">
+    <a class="primary btn" routerLink="/users/new">
+    <i class="fa-solid fa-plus"></i>
+    {{ 'USERS.ADD' | translate }}
+    </a>
+  </div>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (users().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'USERS.USERNAME' | translate }}</th>
+            <th>{{ 'USERS.FULL_NAME' | translate }}</th>
+            <th>{{ 'USERS.EMAIL' | translate }}</th>
+            <th>{{ 'USERS.ROLES' | translate }}</th>
+            <th>{{ 'USERS.STATUS' | translate }}</th>
+            <th>{{ 'USERS.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr>
+              <td>{{ user.userName }}</td>
+              <td>{{ user.fullName }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.roles.join(', ') }}</td>
+              <td>
+                <span class="badge" [class.off]="!user.isActive">
+                  {{ (user.isActive ? 'USERS.ACTIVE' : 'USERS.INACTIVE') | translate }}
+                </span>
+              </td>
+              <td class="actions">
+                <a class="link-btn" [routerLink]="['/users', user.id, 'edit']">{{ 'COMMON.EDIT' | translate }}</a>
+                <a class="link-btn" [routerLink]="['/users', user.id, 'password']">{{ 'USERS.RESET_PASSWORD' | translate }}</a>
+                <button type="button" (click)="toggleActive(user)">
+                  {{ (user.isActive ? 'USERS.DEACTIVATE' : 'USERS.ACTIVATE') | translate }}
+                </button>
+                <button type="button" class="danger" (click)="remove(user)">
+                  {{ 'COMMON.DELETE' | translate }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+

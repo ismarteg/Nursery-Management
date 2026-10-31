@@ -1,0 +1,91 @@
+<div class="shell" [class.collapsed]="collapsed()" [class.menu-open]="mobileOpen()">
+  <header class="mobile-bar">
+    <button
+      type="button"
+      class="menu-btn"
+      (click)="toggleMobileMenu()"
+      [attr.aria-expanded]="mobileOpen()"
+      aria-controls="app-sidebar"
+      [attr.aria-label]="(mobileOpen() ? 'NAV.CLOSE_MENU' : 'NAV.OPEN_MENU') | translate"
+    >
+      <i [class]="mobileOpen() ? 'fa-solid fa-xmark' : 'fa-solid fa-bars'"></i>
+    </button>
+    <div class="mobile-brand">
+      <span class="brand-mark" aria-hidden="true">
+        <i class="fa-solid fa-seedling"></i>
+      </span>
+      <strong>{{ 'APP.TITLE' | translate }}</strong>
+    </div>
+  </header>
+
+  <button
+    type="button"
+    class="sidebar-backdrop"
+    tabindex="-1"
+    (click)="closeMobileMenu()"
+    [attr.aria-label]="'NAV.CLOSE_MENU' | translate"
+  ></button>
+
+  <aside class="sidebar" id="app-sidebar" [attr.inert]="navHidden() ? true : null">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <i class="fa-solid fa-seedling"></i>
+      </span>
+      <div class="brand-text">
+        <strong>{{ 'APP.TITLE' | translate }}</strong>
+        <small>{{ auth.user()?.fullName }}</small>
+      </div>
+      <button
+        type="button"
+        class="collapse-btn"
+        (click)="toggleSidebar()"
+        [attr.title]="(collapsed() ? 'NAV.EXPAND' : 'NAV.COLLAPSE') | translate"
+        [attr.aria-label]="(collapsed() ? 'NAV.EXPAND' : 'NAV.COLLAPSE') | translate"
+      >
+        <i [class]="collapseIcon()"></i>
+      </button>
+      <button
+        #drawerClose
+        type="button"
+        class="mobile-close"
+        (click)="closeMobileMenu()"
+        [attr.aria-label]="'NAV.CLOSE_MENU' | translate"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <nav>
+      @for (item of navItems(); track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: !!item.exact }"
+          [attr.title]="item.labelKey | translate"
+          (click)="closeMobileMenu()"
+        >
+          <i [class]="item.icon"></i>
+          <span>{{ item.labelKey | translate }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <button type="button" (click)="language.toggle()" [attr.title]="'NAV.LANGUAGE' | translate">
+        <i class="fa-solid fa-language"></i>
+        <span>{{ language.current() === 'ar' ? 'English' : 'العربية' }}</span>
+      </button>
+      <button type="button" class="logout" (click)="logout()" [attr.title]="'NAV.LOGOUT' | translate">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>{{ 'NAV.LOGOUT' | translate }}</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="content-body">
+      <router-outlet />
+    </div>
+    <app-site-footer />
+  </main>
+</div>

@@ -1,0 +1,76 @@
+<section class="page">
+  <app-page-header
+    [titleKey]="editingId() ? 'USERS.EDIT' : 'USERS.ADD'"
+    icon="fa-solid fa-users"
+    [breadcrumbs]="[
+      { labelKey: 'NAV.USERS', link: '/users' },
+      { labelKey: editingId() ? 'USERS.EDIT' : 'USERS.ADD' }
+    ]" />
+  <div class="page-actions">
+    <a class="btn" routerLink="/users">
+    <i class="fa-solid fa-arrow-right"></i>
+    {{ 'COMMON.BACK' | translate }}
+    </a>
+  </div>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else {
+    <form class="form" (ngSubmit)="save()">
+      <fieldset>
+        @if (!editingId()) {
+          <label>
+            <span>{{ 'USERS.USERNAME' | translate }}</span>
+            <input name="userName" [(ngModel)]="form.userName" required />
+          </label>
+        }
+
+        <label>
+          <span>{{ 'USERS.FULL_NAME' | translate }}</span>
+          <input name="fullName" [(ngModel)]="form.fullName" required />
+        </label>
+
+        <label>
+          <span>{{ 'USERS.EMAIL' | translate }}</span>
+          <input name="email" type="email" [(ngModel)]="form.email" required />
+        </label>
+
+        @if (!editingId()) {
+          <label>
+            <span>{{ 'USERS.PASSWORD' | translate }}</span>
+            <input name="password" type="password" [(ngModel)]="form.password" required minlength="6" />
+          </label>
+        }
+
+        <label class="check">
+          <input name="isActive" type="checkbox" [(ngModel)]="form.isActive" />
+          <span>{{ 'USERS.ACTIVE' | translate }}</span>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>{{ 'USERS.ROLES' | translate }}</legend>
+        @for (role of roles(); track role.id) {
+          <label class="check">
+            <input
+              type="checkbox"
+              [name]="'role-' + role.id"
+              [checked]="isRoleSelected(role.id)"
+              (change)="toggleRole(role.id, $any($event.target).checked)"
+            />
+            <span>{{ role.name }}</span>
+          </label>
+        }
+      </fieldset>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <div class="form-actions">
+        <a routerLink="/users">{{ 'COMMON.CANCEL' | translate }}</a>
+        <button type="submit" class="primary" [disabled]="saving()">{{ 'COMMON.SAVE' | translate }}</button>
+      </div>
+    </form>
+  }
+</section>

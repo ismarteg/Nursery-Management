@@ -1,0 +1,130 @@
+<section class="page">
+  <app-page-header
+    titleKey="ENTRY.DESK_TITLE"
+    icon="fa-solid fa-qrcode"
+    subtitleKey="ENTRY.DESK_HINT"
+    [breadcrumbs]="[{ labelKey: 'NAV.ENTRY' }]" />
+  <div class="page-actions">
+    <a routerLink="/entry/history" class="btn">
+    <i class="fa-solid fa-clock-rotate-left"></i>
+    {{ 'ENTRY.HISTORY' | translate }}
+    </a>
+  </div>
+
+  <section class="camera-panel">
+    <div class="camera-toolbar">
+      @if (!cameraOn()) {
+        <button type="button" class="primary" (click)="startCamera()" [disabled]="cameraBusy()">
+          <i class="fa-solid fa-camera"></i>
+          {{ 'ENTRY.OPEN_CAMERA' | translate }}
+        </button>
+      } @else {
+        <button type="button" (click)="stopCamera()" [disabled]="cameraBusy()">
+          <i class="fa-solid fa-camera-slash"></i>
+          {{ 'ENTRY.CLOSE_CAMERA' | translate }}
+        </button>
+        @if (cameras().length > 1) {
+          <label class="camera-select">
+            <span>{{ 'ENTRY.SWITCH_CAMERA' | translate }}</span>
+            <select
+              [ngModel]="cameraId()"
+              (ngModelChange)="switchCamera($event)"
+              [disabled]="cameraBusy()"
+              name="cameraId"
+            >
+              @for (camera of cameras(); track camera.id) {
+                <option [value]="camera.id">{{ camera.label }}</option>
+              }
+            </select>
+          </label>
+        }
+      }
+    </div>
+
+    @if (cameraError(); as message) {
+      <p class="error">{{ message }}</p>
+    }
+    @if (cameraOn()) {
+      <p class="camera-hint">{{ 'ENTRY.CAMERA_HINT' | translate }}</p>
+    }
+    <div class="qr-stage" [class.active]="cameraOn()">
+      <div id="entry-qr-reader"></div>
+    </div>
+  </section>
+
+  <form class="scan-box" (ngSubmit)="scan(2)">
+    <label>
+      <span>{{ 'ENTRY.CODE' | translate }}</span>
+      <input
+        #codeInput
+        name="code"
+        [(ngModel)]="code"
+        autocomplete="off"
+        [placeholder]="'ENTRY.CODE_PLACEHOLDER' | translate"
+      />
+    </label>
+
+    <label>
+      <span>{{ 'ENTRY.FORCE_TYPE' | translate }}</span>
+      <select name="forceType" [(ngModel)]="forceType">
+        <option [ngValue]="null">{{ 'ENTRY.AUTO' | translate }}</option>
+        <option [ngValue]="0">{{ 'ENTRY.IN' | translate }}</option>
+        <option [ngValue]="1">{{ 'ENTRY.OUT' | translate }}</option>
+      </select>
+    </label>
+
+    <button type="submit" class="primary" [disabled]="scanning() || !code.trim()">
+      {{ 'ENTRY.SCAN' | translate }}
+    </button>
+  </form>
+
+  @if (lastResult(); as result) {
+    <article class="result" [class.out]="result.type === 'Out'">
+      <div class="badge">{{ (result.type === 'In' ? 'ENTRY.IN' : 'ENTRY.OUT') | translate }}</div>
+      <h2>{{ result.child.fullName }}</h2>
+      <p>{{ result.child.code }} · {{ result.child.className || '-' }}</p>
+      <p>
+        {{ result.child.guardianName }}
+        @if (result.child.guardianPhone) {
+          · {{ result.child.guardianPhone }}
+        }
+      </p>
+      @if (result.matchedCodeKind === 'Entry') {
+        <p class="match">{{ 'ENTRY.MATCHED_ENTRY' | translate }}</p>
+      } @else if (result.matchedCodeKind === 'Identity') {
+        <p class="match">{{ 'ENTRY.MATCHED_IDENTITY' | translate }}</p>
+      }
+      <small>{{ result.occurredAt | date: 'medium' }}</small>
+    </article>
+  }
+
+  <section class="present">
+    <h3>{{ 'ENTRY.PRESENT_NOW' | translate }} ({{ presentCount() }})</h3>
+    @if (present().length === 0) {
+      <p>{{ 'COMMON.EMPTY' | translate }}</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ 'CHILDREN.CODE' | translate }}</th>
+              <th>{{ 'CHILDREN.NAME' | translate }}</th>
+              <th>{{ 'CLASSES.NAME' | translate }}</th>
+              <th>{{ 'ENTRY.SINCE' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of present(); track item.id) {
+              <tr>
+                <td>{{ item.code }}</td>
+                <td>{{ item.fullName }}</td>
+                <td>{{ item.className || '-' }}</td>
+                <td>{{ item.since | date: 'short' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</section>

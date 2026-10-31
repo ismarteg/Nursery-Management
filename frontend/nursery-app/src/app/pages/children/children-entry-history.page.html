@@ -1,0 +1,82 @@
+<section class="page">
+  <app-page-header
+    titleKey="CHILDREN.ENTRY_HISTORY"
+    icon="fa-solid fa-clock-rotate-left"
+    [breadcrumbs]="[
+      { labelKey: 'NAV.CHILDREN', link: '/children' },
+      { labelKey: 'CHILDREN.ENTRY_HISTORY' }
+    ]"
+  />
+
+  <div class="page-actions">
+    <a routerLink="/children" class="btn">
+      <i class="fa-solid fa-arrow-right-to-bracket"></i>
+      {{ 'COMMON.BACK' | translate }}
+    </a>
+  </div>
+
+  @if (childLoading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (child(); as c) {
+    <div class="child-summary">
+      <strong>{{ c.fullName }}</strong>
+      <span>{{ c.code }}</span>
+      @if (c.className) {
+        <span>{{ c.className }}</span>
+      }
+    </div>
+  }
+
+  <form class="filters" (ngSubmit)="load()">
+    <label>
+      <span>{{ 'CHILDREN.HISTORY_FROM' | translate }}</span>
+      <input type="date" name="from" [(ngModel)]="from" />
+    </label>
+    <label>
+      <span>{{ 'CHILDREN.HISTORY_TO' | translate }}</span>
+      <input type="date" name="to" [(ngModel)]="to" />
+    </label>
+    <label>
+      <span>{{ 'ENTRY.TYPE' | translate }}</span>
+      <select name="type" [(ngModel)]="type">
+        <option value="">{{ 'ENTRY.TYPE' | translate }}</option>
+        <option value="In">{{ 'ENTRY.IN' | translate }}</option>
+        <option value="Out">{{ 'ENTRY.OUT' | translate }}</option>
+      </select>
+    </label>
+    <div class="filter-actions">
+      <button type="submit" class="primary">{{ 'AUDIT.FILTER' | translate }}</button>
+      <button type="button" (click)="clearDates()">{{ 'CHILDREN.HISTORY_CLEAR' | translate }}</button>
+    </div>
+  </form>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (items().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <p class="total">{{ total() }} {{ 'ENTRY.RECORDS' | translate }}</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'AUDIT.TIME' | translate }}</th>
+            <th>{{ 'ENTRY.TYPE' | translate }}</th>
+            <th>{{ 'ENTRY.METHOD' | translate }}</th>
+            <th>{{ 'CLASSES.NAME' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items(); track item.id) {
+            <tr>
+              <td>{{ item.occurredAt | date: 'short' }}</td>
+              <td>{{ (item.type === 'In' ? 'ENTRY.IN' : 'ENTRY.OUT') | translate }}</td>
+              <td>{{ item.method }}</td>
+              <td>{{ item.className || '-' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

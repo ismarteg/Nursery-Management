@@ -1,0 +1,81 @@
+<section class="page">
+  <app-page-header
+    titleKey="ATTENDANCE.TITLE"
+    icon="fa-solid fa-calendar-check"
+    subtitleKey="ATTENDANCE.HINT"
+    [breadcrumbs]="[{ labelKey: 'NAV.ATTENDANCE' }]" />
+  <div class="page-actions">
+    <button type="button" class="btn" (click)="downloadSample()">
+    <i class="fa-solid fa-download"></i>
+    {{ 'ATTENDANCE.SAMPLE' | translate }}
+    </button>
+  </div>
+
+  @if (canUpload) {
+    <form class="upload-box" (ngSubmit)="upload()">
+      <input type="file" accept=".csv,text/csv" (change)="onFileSelected($event)" />
+      <button type="submit" class="primary" [disabled]="uploading() || !selectedFile">
+        {{ 'ATTENDANCE.UPLOAD' | translate }}
+      </button>
+    </form>
+  }
+
+  @if (uploadResult(); as result) {
+    <article class="result">
+      <p>
+        {{ result.fileName }} —
+        {{ result.successRows }}/{{ result.totalRows }}
+        {{ 'ATTENDANCE.SUCCESS' | translate }}
+        @if (result.failedRows > 0) {
+          · {{ result.failedRows }} {{ 'ATTENDANCE.FAILED' | translate }}
+        }
+      </p>
+      @if (result.errors.length) {
+        <ul>
+          @for (err of result.errors; track err) {
+            <li>{{ err }}</li>
+          }
+        </ul>
+      }
+    </article>
+  }
+
+  <form class="filters" (ngSubmit)="reload()">
+    <input type="number" name="year" [(ngModel)]="year" min="2000" />
+    <input type="number" name="month" [(ngModel)]="month" min="1" max="12" />
+    <button type="submit" class="primary">{{ 'AUDIT.FILTER' | translate }}</button>
+  </form>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (rows().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'STAFF.CODE' | translate }}</th>
+            <th>{{ 'STAFF.NAME' | translate }}</th>
+            <th>{{ 'ATTENDANCE.DATE' | translate }}</th>
+            <th>{{ 'ATTENDANCE.IN' | translate }}</th>
+            <th>{{ 'ATTENDANCE.OUT' | translate }}</th>
+            <th>{{ 'ATTENDANCE.HOURS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.staffCode }}</td>
+              <td>{{ row.staffName }}</td>
+              <td>{{ row.workDate | date: 'mediumDate' }}</td>
+              <td>{{ row.clockIn }}</td>
+              <td>{{ row.clockOut }}</td>
+              <td>{{ row.workedHours }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

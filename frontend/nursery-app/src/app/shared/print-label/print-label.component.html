@@ -1,0 +1,44 @@
+<div
+  class="print-label"
+  dir="ltr"
+  [attr.id]="printId"
+  [style.width.mm]="layout.widthMm"
+  [style.height.mm]="layout.heightMm"
+  [style.background]="layout.backgroundColor || '#ffffff'"
+  [style.transform]="'scale(' + previewScale + ')'"
+  [style.transformOrigin]="'top left'"
+>
+  @for (field of layout.fields; track field.id) {
+    <div
+      class="print-field"
+      dir="ltr"
+      [attr.data-type]="field.fieldType"
+      [style.left.mm]="field.xMm"
+      [style.top.mm]="field.yMm"
+      [style.width.mm]="field.widthMm"
+      [style.height.mm]="field.heightMm"
+      [style.color]="field.color"
+      [style.fontSize.pt]="field.fontSize"
+      [style.fontWeight]="field.fontWeight"
+      [style.justifyContent]="physicalAlign(field.align)"
+      [style.textAlign]="physicalTextAlign(field.align)"
+    >
+      @switch (field.fieldType) {
+        @case ('qr') {
+          <canvas #qrCanvas></canvas>
+        }
+        @case ('barcode') {
+          <svg #barcodeSvg></svg>
+        }
+        @case ('image') {
+          @if (imageSrc(field); as src) {
+            <img [src]="src" alt="" />
+          }
+        }
+        @default {
+          <span class="field-text">{{ fieldValue(field) }}</span>
+        }
+      }
+    </div>
+  }
+</div>

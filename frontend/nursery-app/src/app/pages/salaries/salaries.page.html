@@ -1,0 +1,66 @@
+<section class="page">
+  <app-page-header
+    titleKey="SALARIES.TITLE"
+    icon="fa-solid fa-wallet"
+    subtitleKey="SALARIES.HINT"
+    [breadcrumbs]="[{ labelKey: 'NAV.SALARIES' }]"
+  />
+
+  <form class="filters" (ngSubmit)="reload()">
+    <input type="number" name="year" [(ngModel)]="year" min="2000" />
+    <input type="number" name="month" [(ngModel)]="month" min="1" max="12" />
+    <button type="submit" class="primary">{{ 'AUDIT.FILTER' | translate }}</button>
+    @if (canCalculate) {
+      <button type="button" class="primary" [disabled]="calculating()" (click)="calculate()">
+        {{ 'SALARIES.CALCULATE' | translate }}
+      </button>
+    }
+  </form>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (rows().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'STAFF.CODE' | translate }}</th>
+            <th>{{ 'STAFF.NAME' | translate }}</th>
+            <th>{{ 'SALARIES.DAYS' | translate }}</th>
+            <th>{{ 'SALARIES.HOURS' | translate }}</th>
+            <th>{{ 'SALARIES.AMOUNT' | translate }}</th>
+            <th>{{ 'STAFF.SALARY_TYPE' | translate }}</th>
+            <th>{{ 'PAYMENTS.STATUS' | translate }}</th>
+            <th>{{ 'SALARIES.CALCULATED_AT' | translate }}</th>
+            @if (canCalculate) {
+              <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.staffCode }}</td>
+              <td>{{ row.staffName }}</td>
+              <td>{{ row.workedDays }}</td>
+              <td>{{ row.workedHours }}</td>
+              <td>{{ row.amount }}</td>
+              <td>{{ row.salaryType }}</td>
+              <td>{{ row.status }}</td>
+              <td>{{ row.calculatedAt | date: 'short' }}</td>
+              @if (canCalculate) {
+                <td>
+                  @if (row.status !== 'Paid') {
+                    <button type="button" (click)="markPaid(row)">{{ 'SALARIES.MARK_PAID' | translate }}</button>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

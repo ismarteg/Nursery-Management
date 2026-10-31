@@ -1,3 +1,28 @@
+:root {
+  --nm-main: #c8b6ff;
+  --nm-pink: #ffd6ff;
+  --nm-lilac: #e7c6ff;
+  --nm-periwinkle: #b8c0ff;
+  --nm-sky: #bbd0ff;
+  --nm-primary: #c8b6ff;
+  --nm-primary-deep: #8b6fd4;
+  --nm-primary-dark: #6b4fb8;
+  --nm-primary-ink: #4a3480;
+  --nm-surface: #ffffff;
+  --nm-bg: #f6f3ff;
+  --nm-bg-soft: linear-gradient(160deg, #ffd6ff22 0%, #bbd0ff33 45%, #f6f3ff 100%);
+  --nm-border: #d9d0f5;
+  --nm-muted: #6b6488;
+  --nm-text: #2f2750;
+  --nm-success: #047857;
+  --nm-danger: #b91c1c;
+  --nm-radius: 12px;
+  --nm-shadow: 0 10px 30px rgba(75, 52, 128, 0.08);
+  --nm-sidebar-expanded: 260px;
+  --nm-sidebar-collapsed: 78px;
+  --nm-font: 'Cairo', 'Tajawal', sans-serif;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -6,35 +31,172 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-  background: linear-gradient(160deg, #e8f5ef 0%, #f7fafc 45%, #eef2ff 100%);
-  color: #1f2937;
+  font-family: var(--nm-font);
+  background: var(--nm-bg);
+  background-image: var(--nm-bg-soft);
+  color: var(--nm-text);
 }
 
-.landing {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: var(--nm-primary-deep);
+}
+
+.page h1,
+.page-header h1 {
+  color: var(--nm-primary-ink);
+  font-family: 'Tajawal', 'Cairo', sans-serif;
+  font-weight: 700;
+}
+
+button.primary,
+.btn-primary {
+  background: var(--nm-primary-deep);
+  border-color: var(--nm-primary-deep);
+  color: #fff;
+}
+
+button.primary:hover,
+.btn-primary:hover,
+a.primary.btn:hover {
+  background: var(--nm-primary-dark);
+  border-color: var(--nm-primary-dark);
+}
+
+a.btn,
+button.btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  border: 1px solid var(--nm-border);
+  border-radius: 10px;
+  padding: 0.55rem 0.85rem;
+  background: #fff;
+  color: var(--nm-primary-ink);
+  cursor: pointer;
+  font: inherit;
+}
+
+a.primary.btn,
+button.primary.btn,
+button.primary {
+  background: var(--nm-primary-deep);
+  border-color: var(--nm-primary-deep);
+  color: #fff;
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  text-align: center;
-  padding: 2rem;
+  align-items: center;
+  margin: 0 0 1rem;
 }
 
-.landing h1 {
-  margin: 0;
-  font-size: 2.5rem;
-  color: #0f766e;
+fieldset {
+  min-width: 0;
+  max-width: 100%;
 }
 
-.landing p {
-  margin: 0;
-  font-size: 1.15rem;
+body.nm-nav-open {
+  overflow: hidden;
 }
 
-.hint {
-  margin-top: 1rem !important;
-  color: #64748b;
-  font-size: 0.95rem !important;
+.form-actions,
+.modal-actions {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 860px) {
+  .page {
+    min-width: 0;
+  }
+
+  .page-actions > a,
+  .page-actions > button,
+  .form-actions > button,
+  .form-actions > a,
+  .modal-actions > button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .table-wrap {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Print must be global — component-scoped CSS cannot hide the shell/page. */
+@media print {
+  @page {
+    margin: 0;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    background-image: none !important;
+  }
+
+  body.nm-printing-label * {
+    visibility: hidden !important;
+  }
+
+  body.nm-printing-label app-print-label,
+  body.nm-printing-label app-print-label *,
+  body.nm-printing-label #print-label,
+  body.nm-printing-label #print-label * {
+    visibility: visible !important;
+  }
+
+  body.nm-printing-label .no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  body.nm-printing-label .modal-backdrop,
+  body.nm-printing-label .card-modal,
+  body.nm-printing-label .label-preview-wrap {
+    position: static !important;
+    inset: auto !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  body.nm-printing-label #print-label {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: auto !important;
+    margin: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    direction: ltr !important;
+    unicode-bidi: isolate;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body.nm-printing-label app-print-label,
+  body.nm-printing-label .print-field {
+    direction: ltr !important;
+  }
 }

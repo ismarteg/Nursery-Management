@@ -1,0 +1,66 @@
+<section class="page">
+  <app-page-header
+    titleKey="ENTRY.HISTORY"
+    icon="fa-solid fa-clock-rotate-left"
+    [breadcrumbs]="[
+      { labelKey: 'NAV.ENTRY', link: '/entry' },
+      { labelKey: 'ENTRY.HISTORY' }
+    ]" />
+  <div class="page-actions">
+    <a routerLink="/entry" class="btn">
+    <i class="fa-solid fa-qrcode"></i>
+    {{ 'ENTRY.DESK_TITLE' | translate }}
+    </a>
+  </div>
+
+  <form class="filters" (ngSubmit)="load()">
+    <select name="classId" [(ngModel)]="classId">
+      <option value="">{{ 'CLASSES.TITLE' | translate }}</option>
+      @for (item of classes(); track item.id) {
+        <option [value]="item.id">{{ item.name }}</option>
+      }
+    </select>
+    <select name="type" [(ngModel)]="type">
+      <option value="">{{ 'ENTRY.TYPE' | translate }}</option>
+      <option value="In">{{ 'ENTRY.IN' | translate }}</option>
+      <option value="Out">{{ 'ENTRY.OUT' | translate }}</option>
+    </select>
+    <input type="date" name="from" [(ngModel)]="from" />
+    <input type="date" name="to" [(ngModel)]="to" />
+    <button type="submit" class="primary">{{ 'AUDIT.FILTER' | translate }}</button>
+  </form>
+
+  @if (loading()) {
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (items().length === 0) {
+    <p>{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <p class="total">{{ total() }} {{ 'ENTRY.RECORDS' | translate }}</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'AUDIT.TIME' | translate }}</th>
+            <th>{{ 'CHILDREN.CODE' | translate }}</th>
+            <th>{{ 'CHILDREN.NAME' | translate }}</th>
+            <th>{{ 'CLASSES.NAME' | translate }}</th>
+            <th>{{ 'ENTRY.TYPE' | translate }}</th>
+            <th>{{ 'ENTRY.METHOD' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items(); track item.id) {
+            <tr>
+              <td>{{ item.occurredAt | date: 'short' }}</td>
+              <td>{{ item.childCode }}</td>
+              <td>{{ item.childName }}</td>
+              <td>{{ item.className || '-' }}</td>
+              <td>{{ (item.type === 'In' ? 'ENTRY.IN' : 'ENTRY.OUT') | translate }}</td>
+              <td>{{ item.method }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

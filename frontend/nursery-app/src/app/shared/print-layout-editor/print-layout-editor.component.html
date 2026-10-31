@@ -1,0 +1,272 @@
+@if (doc(); as layouts) {
+  <div class="editor">
+    <div class="tabs">
+      <button
+        type="button"
+        [class.active]="activeType() === 'normalCard'"
+        (click)="setType('normalCard')"
+      >
+        {{ 'SETTINGS.NORMAL_CARD' | translate }}
+      </button>
+      <button
+        type="button"
+        [class.active]="activeType() === 'pickupPass'"
+        (click)="setType('pickupPass')"
+      >
+        {{ 'SETTINGS.PICKUP_PASS' | translate }}
+      </button>
+    </div>
+
+    @if (activeLayout(); as layout) {
+      <div class="editor-body">
+        <div class="canvas-pane">
+          <div class="canvas-toolbar">
+            <label>
+              <span>{{ 'SETTINGS.CARD_WIDTH' | translate }}</span>
+              <input
+                type="number"
+                [(ngModel)]="layout.widthMm"
+                (ngModelChange)="onCardSizeChange()"
+                [disabled]="readonly"
+                min="20"
+                max="200"
+                step="1"
+              />
+            </label>
+            <label>
+              <span>{{ 'SETTINGS.CARD_HEIGHT' | translate }}</span>
+              <input
+                type="number"
+                [(ngModel)]="layout.heightMm"
+                (ngModelChange)="onCardSizeChange()"
+                [disabled]="readonly"
+                min="15"
+                max="200"
+                step="1"
+              />
+            </label>
+            <label>
+              <span>{{ 'SETTINGS.BG_COLOR' | translate }}</span>
+              <input
+                type="color"
+                [(ngModel)]="layout.backgroundColor"
+                (ngModelChange)="onCardSizeChange()"
+                [disabled]="readonly"
+              />
+            </label>
+            @if (!readonly) {
+              <button type="button" class="primary" (click)="addField()">
+                {{ 'SETTINGS.ADD_FIELD' | translate }}
+              </button>
+            }
+          </div>
+
+          <div
+            class="canvas"
+            dir="ltr"
+            [style.width.px]="layout.widthMm * scale"
+            [style.height.px]="layout.heightMm * scale"
+            [style.background]="layout.backgroundColor || '#fff'"
+            (pointerdown)="onCanvasPointerDown($event)"
+          >
+            @for (field of layout.fields; track field.id) {
+              <div
+                class="editor-field"
+                dir="ltr"
+                [class.selected]="selectedFieldId() === field.id"
+                [attr.data-id]="field.id"
+                [style.left.px]="field.xMm * scale"
+                [style.top.px]="field.yMm * scale"
+                [style.width.px]="field.widthMm * scale"
+                [style.height.px]="field.heightMm * scale"
+                [style.color]="field.color"
+                [style.fontSize.px]="field.fontSize * (scale / 3.2)"
+                [style.fontWeight]="field.fontWeight"
+                [style.justifyContent]="physicalAlign(field.align)"
+                [style.textAlign]="physicalAlign(field.align)"
+              >
+                <span class="field-badge">{{ field.fieldType }}</span>
+                @if (field.fieldType === 'qr') {
+                  <span class="code-placeholder">QR</span>
+                } @else if (field.fieldType === 'barcode') {
+                  <span class="code-placeholder">||||</span>
+                } @else if (field.fieldType === 'image') {
+                  <span class="code-placeholder">IMG</span>
+                } @else if (field.fieldType === 'static') {
+                  {{ field.staticText || 'text' }}
+                } @else {
+                  {{ '{' + field.dbField + '}' }}
+                }
+              </div>
+            }
+          </div>
+
+          <div class="live-preview">
+            <h4>{{ 'SETTINGS.LIVE_PREVIEW' | translate }}</h4>
+            <app-print-label [layout]="layout" [data]="sampleData" [previewScale]="1" printId="editor-preview" />
+          </div>
+        </div>
+
+        <aside class="props-pane">
+          <h3>{{ 'SETTINGS.FIELD_PROPS' | translate }}</h3>
+          @if (selectedField(); as field) {
+            <label>
+              <span>{{ 'SETTINGS.FIELD_TYPE' | translate }}</span>
+              <select
+                [(ngModel)]="field.fieldType"
+                (ngModelChange)="onFieldPropChange()"
+                [disabled]="readonly"
+              >
+                @for (t of fieldTypes; track t) {
+                  <option [value]="t">{{ t }}</option>
+                }
+              </select>
+            </label>
+
+            @if (field.fieldType !== 'static') {
+              <label>
+                <span>{{ 'SETTINGS.DB_FIELD' | translate }}</span>
+                <select
+                  [(ngModel)]="field.dbField"
+                  (ngModelChange)="onFieldPropChange()"
+                  [disabled]="readonly"
+                >
+                  @for (db of dbFields; track db) {
+                    <option [value]="db">{{ db }}</option>
+                  }
+                </select>
+              </label>
+            } @else {
+              <label>
+                <span>{{ 'SETTINGS.STATIC_TEXT' | translate }}</span>
+                <input
+                  [(ngModel)]="field.staticText"
+                  (ngModelChange)="onFieldPropChange()"
+                  [disabled]="readonly"
+                />
+              </label>
+            }
+
+            <div class="row2">
+              <label>
+                <span>{{ 'SETTINGS.FONT_SIZE' | translate }}</span>
+                <input
+                  type="number"
+                  [(ngModel)]="field.fontSize"
+                  (ngModelChange)="onFieldPropChange()"
+                  [disabled]="readonly"
+                  min="6"
+                  max="48"
+                />
+              </label>
+              <label>
+                <span>{{ 'SETTINGS.COLOR' | translate }}</span>
+                <input
+                  type="color"
+                  [(ngModel)]="field.color"
+                  (ngModelChange)="onFieldPropChange()"
+                  [disabled]="readonly"
+                />
+              </label>
+            </div>
+
+            <div class="row2">
+              <label>
+                <span>X (mm)</span>
+                <input
+                  type="number"
+                  [(ngModel)]="field.xMm"
+                  (ngModelChange)="onFieldPropChange()"
+                  [disabled]="readonly"
+                  step="0.5"
+                />
+              </label>
+              <label>
+                <span>Y (mm)</span>
+                <input
+                  type="number"
+                  [(ngModel)]="field.yMm"
+                  (ngModelChange)="onFieldPropChange()"
+                  [disabled]="readonly"
+                  step="0.5"
+                />
+              </label>
+            </div>
+
+            <div class="row2">
+              <label>
+                <span>W (mm)</span>
+                <input
+                  type="number"
+                  [(ngModel)]="field.widthMm"
+                  (ngModelChange)="onFieldPropChange()"
+                  [disabled]="readonly"
+                  step="0.5"
+                  min="2"
+                />
+              </label>
+              <label>
+                <span>H (mm)</span>
+                <input
+                  type="number"
+                  [(ngModel)]="field.heightMm"
+                  (ngModelChange)="onFieldPropChange()"
+                  [disabled]="readonly"
+                  step="0.5"
+                  min="2"
+                />
+              </label>
+            </div>
+
+            <label>
+              <span>{{ 'SETTINGS.ALIGN' | translate }}</span>
+              <select
+                [(ngModel)]="field.align"
+                (ngModelChange)="onFieldPropChange()"
+                [disabled]="readonly"
+              >
+                <option value="left">left</option>
+                <option value="center">center</option>
+                <option value="right">right</option>
+              </select>
+            </label>
+
+            <label>
+              <span>{{ 'SETTINGS.FONT_WEIGHT' | translate }}</span>
+              <select
+                [(ngModel)]="field.fontWeight"
+                (ngModelChange)="onFieldPropChange()"
+                [disabled]="readonly"
+              >
+                <option value="normal">normal</option>
+                <option value="bold">bold</option>
+              </select>
+            </label>
+
+            @if (field.fieldType === 'barcode') {
+              <label>
+                <span>{{ 'SETTINGS.BARCODE_FORMAT' | translate }}</span>
+                <select
+                  [(ngModel)]="field.codeFormat"
+                  (ngModelChange)="onFieldPropChange()"
+                  [disabled]="readonly"
+                >
+                  <option value="CODE128">CODE128</option>
+                  <option value="CODE39">CODE39</option>
+                </select>
+              </label>
+            }
+
+            @if (!readonly) {
+              <button type="button" class="danger" (click)="removeSelected()">
+                {{ 'SETTINGS.REMOVE_FIELD' | translate }}
+              </button>
+            }
+          } @else {
+            <p class="hint">{{ 'SETTINGS.SELECT_FIELD' | translate }}</p>
+          }
+        </aside>
+      </div>
+    }
+  </div>
+}

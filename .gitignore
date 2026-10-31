@@ -8,6 +8,8 @@
 **/nursery*.db
 **/nursery*.db-shm
 **/nursery*.db-wal
+**/App_Data/
+**/_buildcheck/
 
 # Node / Angular
 **/node_modules/
