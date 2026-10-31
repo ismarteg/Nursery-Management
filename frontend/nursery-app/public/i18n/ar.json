@@ -27,7 +27,12 @@
     "COLLAPSE": "طي القائمة",
     "EXPAND": "توسيع القائمة",
     "OPEN_MENU": "فتح القائمة",
-    "CLOSE_MENU": "إغلاق القائمة"
+    "CLOSE_MENU": "إغلاق القائمة",
+    "SECTION_CHILDREN": "الأطفال",
+    "SECTION_HR": "الموارد البشرية",
+    "SECTION_ACCOUNTING": "الحسابات",
+    "SECTION_SETTINGS_USERS": "الإعدادات والمستخدمون",
+    "SECTION_SYSTEM_ADMIN": "إدارة النظام"
   },
   "LOGIN": {
     "TITLE": "تسجيل الدخول",

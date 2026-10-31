@@ -13,6 +13,12 @@ interface NavItem {
   visible: () => boolean;
 }
 
+interface NavSection {
+  id: string;
+  labelKey?: string;
+  items: NavItem[];
+}
+
 @Component({
   selector: 'app-shell-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe, SiteFooterComponent],
@@ -44,105 +50,149 @@ export class ShellLayout {
   readonly canReadSettings = computed(() => this.auth.hasPermission('settings.read'));
   readonly canReadLogs = computed(() => this.auth.hasPermission('logs.read'));
 
-  readonly navItems = computed<NavItem[]>(() => [
-    {
-      path: '/',
-      labelKey: 'NAV.DASHBOARD',
-      icon: 'fa-solid fa-gauge-high',
-      exact: true,
-      visible: () => true
-    },
-    {
-      path: '/profile',
-      labelKey: 'NAV.PROFILE',
-      icon: 'fa-solid fa-id-card',
-      visible: () => true
-    },
-    {
-      path: '/entry',
-      labelKey: 'NAV.ENTRY',
-      icon: 'fa-solid fa-qrcode',
-      visible: () => this.canScanEntry()
-    },
-    {
-      path: '/children',
-      labelKey: 'NAV.CHILDREN',
-      icon: 'fa-solid fa-children',
-      visible: () => this.canReadChildren()
-    },
-    {
-      path: '/classes',
-      labelKey: 'NAV.CLASSES',
-      icon: 'fa-solid fa-chalkboard',
-      visible: () => this.canReadClasses()
-    },
-    {
-      path: '/staff',
-      labelKey: 'NAV.STAFF',
-      icon: 'fa-solid fa-user-tie',
-      visible: () => this.canReadStaff()
-    },
-    {
-      path: '/price-plans',
-      labelKey: 'NAV.PLANS',
-      icon: 'fa-solid fa-tags',
-      visible: () => this.canReadPricePlans()
-    },
-    {
-      path: '/payments',
-      labelKey: 'NAV.PAYMENTS',
-      icon: 'fa-solid fa-money-bill-wave',
-      visible: () => this.canReadPayments()
-    },
-    {
-      path: '/expenses',
-      labelKey: 'NAV.EXPENSES',
-      icon: 'fa-solid fa-receipt',
-      visible: () => this.canReadExpenses()
-    },
-    {
-      path: '/attendance',
-      labelKey: 'NAV.ATTENDANCE',
-      icon: 'fa-solid fa-calendar-check',
-      visible: () => this.canReadSalaries()
-    },
-    {
-      path: '/salaries',
-      labelKey: 'NAV.SALARIES',
-      icon: 'fa-solid fa-wallet',
-      visible: () => this.canReadSalaries()
-    },
-    {
-      path: '/users',
-      labelKey: 'NAV.USERS',
-      icon: 'fa-solid fa-users',
-      visible: () => this.canManageRoles()
-    },
-    {
-      path: '/roles',
-      labelKey: 'NAV.ROLES',
-      icon: 'fa-solid fa-user-shield',
-      visible: () => this.canManageRoles()
-    },
-    {
-      path: '/settings',
-      labelKey: 'NAV.SETTINGS',
-      icon: 'fa-solid fa-gear',
-      visible: () => this.canReadSettings()
-    },
-    {
-      path: '/logs',
-      labelKey: 'NAV.LOGS',
-      icon: 'fa-solid fa-clipboard-list',
-      visible: () => this.canReadLogs()
-    },
-    {
-      path: '/audit',
-      labelKey: 'NAV.AUDIT',
-      icon: 'fa-solid fa-clock-rotate-left',
-      visible: () => this.canReadAudit()
-    }
-  ].filter((item) => item.visible()));
+  readonly navSections = computed<NavSection[]>(() => {
+    const sections: NavSection[] = [
+      {
+        id: 'main',
+        items: [
+          {
+            path: '/',
+            labelKey: 'NAV.DASHBOARD',
+            icon: 'fa-solid fa-gauge-high',
+            exact: true,
+            visible: () => true
+          }
+        ]
+      },
+      {
+        id: 'children',
+        labelKey: 'NAV.SECTION_CHILDREN',
+        items: [
+          {
+            path: '/entry',
+            labelKey: 'NAV.ENTRY',
+            icon: 'fa-solid fa-qrcode',
+            visible: () => this.canScanEntry()
+          },
+          {
+            path: '/children',
+            labelKey: 'NAV.CHILDREN',
+            icon: 'fa-solid fa-children',
+            visible: () => this.canReadChildren()
+          },
+          {
+            path: '/classes',
+            labelKey: 'NAV.CLASSES',
+            icon: 'fa-solid fa-chalkboard',
+            visible: () => this.canReadClasses()
+          }
+        ]
+      },
+      {
+        id: 'hr',
+        labelKey: 'NAV.SECTION_HR',
+        items: [
+          {
+            path: '/staff',
+            labelKey: 'NAV.STAFF',
+            icon: 'fa-solid fa-user-tie',
+            visible: () => this.canReadStaff()
+          },
+          {
+            path: '/attendance',
+            labelKey: 'NAV.ATTENDANCE',
+            icon: 'fa-solid fa-calendar-check',
+            visible: () => this.canReadSalaries()
+          },
+          {
+            path: '/salaries',
+            labelKey: 'NAV.SALARIES',
+            icon: 'fa-solid fa-wallet',
+            visible: () => this.canReadSalaries()
+          }
+        ]
+      },
+      {
+        id: 'accounting',
+        labelKey: 'NAV.SECTION_ACCOUNTING',
+        items: [
+          {
+            path: '/price-plans',
+            labelKey: 'NAV.PLANS',
+            icon: 'fa-solid fa-tags',
+            visible: () => this.canReadPricePlans()
+          },
+          {
+            path: '/payments',
+            labelKey: 'NAV.PAYMENTS',
+            icon: 'fa-solid fa-money-bill-wave',
+            visible: () => this.canReadPayments()
+          },
+          {
+            path: '/expenses',
+            labelKey: 'NAV.EXPENSES',
+            icon: 'fa-solid fa-receipt',
+            visible: () => this.canReadExpenses()
+          }
+        ]
+      },
+      {
+        id: 'settings-users',
+        labelKey: 'NAV.SECTION_SETTINGS_USERS',
+        items: [
+          {
+            path: '/profile',
+            labelKey: 'NAV.PROFILE',
+            icon: 'fa-solid fa-id-card',
+            visible: () => true
+          },
+          {
+            path: '/settings',
+            labelKey: 'NAV.SETTINGS',
+            icon: 'fa-solid fa-gear',
+            visible: () => this.canReadSettings()
+          },
+          {
+            path: '/users',
+            labelKey: 'NAV.USERS',
+            icon: 'fa-solid fa-users',
+            visible: () => this.canManageRoles()
+          },
+          {
+            path: '/roles',
+            labelKey: 'NAV.ROLES',
+            icon: 'fa-solid fa-user-shield',
+            visible: () => this.canManageRoles()
+          }
+        ]
+      },
+      {
+        id: 'system-admin',
+        labelKey: 'NAV.SECTION_SYSTEM_ADMIN',
+        items: [
+          {
+            path: '/logs',
+            labelKey: 'NAV.LOGS',
+            icon: 'fa-solid fa-clipboard-list',
+            visible: () => this.canReadLogs()
+          },
+          {
+            path: '/audit',
+            labelKey: 'NAV.AUDIT',
+            icon: 'fa-solid fa-clock-rotate-left',
+            visible: () => this.canReadAudit()
+          }
+        ]
+      }
+    ];
+
+    return sections
+      .map((section) => ({
+        ...section,
+        items: section.items.filter((item) => item.visible())
+      }))
+      .filter((section) => section.items.length > 0);
+  });
 
   readonly collapseIcon = computed(() => {
     const rtl = this.language.current() === 'ar';

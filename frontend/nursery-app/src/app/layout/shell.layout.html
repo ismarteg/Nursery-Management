@@ -56,17 +56,24 @@
     </div>
 
     <nav>
-      @for (item of navItems(); track item.path) {
-        <a
-          [routerLink]="item.path"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: !!item.exact }"
-          [attr.title]="item.labelKey | translate"
-          (click)="closeMobileMenu()"
-        >
-          <i [class]="item.icon"></i>
-          <span>{{ item.labelKey | translate }}</span>
-        </a>
+      @for (section of navSections(); track section.id) {
+        <div class="nav-section">
+          @if (section.labelKey && (!collapsed() || isMobile())) {
+            <div class="nav-section-title">{{ section.labelKey | translate }}</div>
+          }
+          @for (item of section.items; track item.path) {
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: !!item.exact }"
+              [attr.title]="item.labelKey | translate"
+              (click)="closeMobileMenu()"
+            >
+              <i [class]="item.icon"></i>
+              <span>{{ item.labelKey | translate }}</span>
+            </a>
+          }
+        </div>
       }
     </nav>
 

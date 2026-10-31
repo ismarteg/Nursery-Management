@@ -27,7 +27,12 @@
     "COLLAPSE": "Collapse menu",
     "EXPAND": "Expand menu",
     "OPEN_MENU": "Open menu",
-    "CLOSE_MENU": "Close menu"
+    "CLOSE_MENU": "Close menu",
+    "SECTION_CHILDREN": "Children",
+    "SECTION_HR": "HR",
+    "SECTION_ACCOUNTING": "Accounting",
+    "SECTION_SETTINGS_USERS": "Settings and Users",
+    "SECTION_SYSTEM_ADMIN": "System Admin"
   },
   "LOGIN": {
     "TITLE": "Sign in",
